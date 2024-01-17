@@ -120,7 +120,7 @@ dotnet add $domainsName package Microsoft.EntityFrameworkCore.Design --version $
 
 dotnet add $dirName package Microsoft.EntityFrameworkCore.Design --version $packageVersion
 
-# Onnodige packages removen in views
+# Onnodige packages removen in views.
 
 dotnet remove $dirName package Microsoft.EntityFrameworkCore.SqlServer
 
