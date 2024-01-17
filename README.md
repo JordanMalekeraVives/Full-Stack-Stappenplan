@@ -10,6 +10,7 @@ Dit is een stappenplan dat je kan volgen voor de examen. Als je fouten ziet geli
 
     ![ASP.NET Core Web App (Model-View-Controller)](image.png)
 
+    >[!CAUTION]
     > Zorg zerker dat het C# en MVC is.
 
 3.  Vul de projectnaam, locatie in en druk op Next.
@@ -18,6 +19,7 @@ Dit is een stappenplan dat je kan volgen voor de examen. Als je fouten ziet geli
 
     ![Alt text](image-1.png)
 
+    >[!CAUTION]
     > Het zou kunnen dat op het examen extra dingen gevraagd kunnen worden. Dus kijk goed naar de opgave!
 
 5.  Druk op `Create` om het project te creëren. 
@@ -48,26 +50,22 @@ Gebruik deze script om de domains, services en repositories projectmappen aan te
     # dus $dirName = "MijnProjectNaam"
 
     # Variabelen
-
     $dirName = (Get-Item -Path ".\").Name
     $domainsName = $dirName + ".Domains"
     $servicesName = $dirName + ".Services"
     $reposName = $dirName + ".Repositories"
 
     # Niewe class libraries toevoegen met de juiste projectnamen
-
     dotnet new classlib --name $domainsName
     dotnet new classlib --name $servicesName
     dotnet new classlib --name $reposName
 
     # De niewe libraries toevoegen aan project sln
-
     dotnet sln add $domainsName
     dotnet sln add $servicesName
     dotnet sln add $reposName
 
     # De juiste references leggen tussen de projecten
-
     dotnet add $dirName reference $domainsName
     dotnet add $dirName reference $servicesName
     dotnet add $servicesName reference $domainsName
@@ -75,13 +73,11 @@ Gebruik deze script om de domains, services en repositories projectmappen aan te
     dotnet add $reposName reference $domainsName
 
     # Remove the class1 classes from the class libraries
-
     Remove-Item -Path "$domainsName\class1.cs" -Force
     Remove-Item -Path "$servicesName\class1.cs" -Force
     Remove-Item -Path "$reposName\class1.cs" -Force
 
     # Dit hoeft erbij
-
     Write-Host "Done"
     ```
 
@@ -110,39 +106,28 @@ $packageVersion = "7.0.11"
 $mapperDir = $dirname + "\AutoMapper"
 
 # SqlServer voor de domains en repos
-
 dotnet add $domainsName package Microsoft.EntityFrameworkCore.SqlServer --version $packageVersion
-
 dotnet add $reposName package Microsoft.EntityFrameworkCore.SqlServer --version $packageVersion
 
 # Tools voor de domains en repos
-
 dotnet add $domainsName package Microsoft.EntityFrameworkCore.Tools --version $packageVersion
-
 dotnet add $reposName package Microsoft.EntityFrameworkCore.Tools --version $packageVersion
 
 # Design voor de domains en views
-
 dotnet add $domainsName package Microsoft.EntityFrameworkCore.Design --version $packageVersion
-
 dotnet add $dirName package Microsoft.EntityFrameworkCore.Design --version $packageVersion
 
 # AutoMapper voor de views
-
 dotnet add $dirName package AutoMapper.Extensions.Microsoft.DependencyInjection
 
 # Onnodige packages removen in views
-
 dotnet remove $dirName package Microsoft.EntityFrameworkCore.SqlServer
-
 dotnet remove $dirName package Microsoft.EntityFrameworkCore.Tools
 
 # Toevoegen van AutoMapper map en class
-
 dotnet new cs --name AutoMapperProfile --output $mapperDir
 
 # Dit hoeft erbij
-
 Write-Host "Done"
 ```
 Het configureren van de AutoMapper gebeurt later.
@@ -184,6 +169,7 @@ Nu kan je verder met het toevoegen van de database
 2.  Selecteer `NuGet Package Manager` en dan `Package Manager Console`
 3. Zorg dat de `Default project` ingesteld staat op `[PROJECTNAAM].Domains`
 4.  Plak het command
+>[!CAUTION]
 >   Vergeet niet de waarden te veranderen!
 ```Powershell
 Scaffold-DbContext -Connection "Server=.\SERVERNAAM; Database=DATABASENAAM; Trusted_Connection=True; TrustServerCertificate=True; MultipleActiveResultSets=true;" -Provider Microsoft.EntityFrameworkCore.SqlServer -OutputDir "Entities" -ContextDir "Data" -Context "TABELDbContext"
@@ -196,7 +182,7 @@ Scaffold-DbContext -Connection "Server=.\SQL19_VIVES; Database=DB-Beer; Trusted_
 ```
 
 ## 5. AutoMapper Configureren
-
+>[!CAUTION]
 >Het installeren van de AutoMapper packages werd al gebeurt in de script. (zie 3.) Als je het script niet hebt gevolgd: NuGet package manager -> AutoMapper.Extensions.Microsoft.DependencyInjection -> enkel voor domains installeren (versie maakt niet uit. Mag laatste zijn.)
 
 1.  Voeg AutoMapper toe aan je `Program.cs` bestand
@@ -221,4 +207,4 @@ Scaffold-DbContext -Connection "Server=.\SQL19_VIVES; Database=DB-Beer; Trusted_
             //CreateMap<TSource, TDestination>;
         }
     }
-    ```
+        ```
