@@ -1,6 +1,13 @@
-﻿namespace FullStackStappenplan;
+﻿using AutoMapper;
+using FullStackStappenplan.Domains.Entities;
 
-public class AutoMapperProfile
+namespace FullStackStappenplan;
+
+public class AutoMapperProfile : Profile
 {
-
+    public AutoMapperProfile()
+    {
+        CreateMap<Beer, BeerVM>();
+        //CreateMap<TSource, TDestination>;
+    }
 }
