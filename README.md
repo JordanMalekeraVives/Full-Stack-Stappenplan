@@ -9,7 +9,8 @@ Dit is een stappenplan dat je kan volgen voor de examen. Als je fouten ziet geli
 2.  Selecteer `ASP.NET Core Web App (Model-View-Controller)`.
 
     ![ASP.NET Core Web App (Model-View-Controller)](image.png)
-    > [!CAUTION]
+
+    [!CAUTION]
     > Zorg zerker dat het C# en MVC is.
 
 3.  Vul de projectnaam, locatie in en druk op Next.
@@ -17,7 +18,8 @@ Dit is een stappenplan dat je kan volgen voor de examen. Als je fouten ziet geli
 4.  Kies voor de juiste framework `.NET 7.0` en authentiecatietype `Invidual accounts`.
 
     ![Alt text](image-1.png)
-    > [!WARNING]
+
+    [!WARNING]
     > Het zou kunnen dat op het examen een andere type of extra dingen gevraagd kunnen worden. Dus kijk goed naar de opgave!
 
 5.  Druk op `Create` om het project te creëren. 
@@ -45,7 +47,7 @@ Gebruik deze script om de domains, services en repositories projectmappen aan te
     ```powershell
     # Als je solution naam anders is dan je folder naam,
     # Verander dan $dirName naar de naam van je solution,
-    # dus $dirName = "MijnProjectNaam".
+    # dus $dirName = "MijnProjectNaam"
 
     # Variabelen
 
@@ -54,25 +56,31 @@ Gebruik deze script om de domains, services en repositories projectmappen aan te
     $servicesName = $dirName + ".Services"
     $reposName = $dirName + ".Repositories"
 
-    # Niewe class libraries toevoegen met de juiste projectnamen.
+    # Niewe class libraries toevoegen met de juiste projectnamen
 
     dotnet new classlib --name $domainsName
     dotnet new classlib --name $servicesName
     dotnet new classlib --name $reposName
 
-    # De niewe libraries toevoegen aan project sln.
+    # De niewe libraries toevoegen aan project sln
 
     dotnet sln add $domainsName
     dotnet sln add $servicesName
     dotnet sln add $reposName
 
-    # De juiste references leggen tussen de projecten.
+    # De juiste references leggen tussen de projecten
 
     dotnet add $dirName reference $domainsName
     dotnet add $dirName reference $servicesName
     dotnet add $servicesName reference $domainsName
     dotnet add $servicesName reference $reposName
     dotnet add $reposName reference $domainsName
+
+    # Remove the class1 classes from the class libraries
+
+    Remove-Item -Path "$domainsName\class1.cs" -Force
+    Remove-Item -Path "$servicesName\class1.cs" -Force
+    Remove-Item -Path "$reposName\class1.cs" -Force
 
     # Dit hoeft erbij
 
@@ -85,7 +93,7 @@ Gebruik deze script om de domains, services en repositories projectmappen aan te
 
 ### Manueel
 
-## 3. Entity Framework opzetten (voor database)
+## 3. Entity Framework en AutoMapper packages opzetten (voor database)
 
 ### Packages installeren a.d.h.v. script
 
@@ -93,7 +101,7 @@ Om de packages toe te voegen aan je projecten, kan je de volgende script gebruik
 
 Plak dit in je Powershell terminal (zie 2. voor terminal tutorial)
 
-```powershell
+```Powershell
 # Variabelen
 
 $dirName = (Get-Item -Path ".\").Name
@@ -101,6 +109,7 @@ $domainsName = $dirName + ".Domains"
 $servicesName = $dirName + ".Services"
 $reposName = $dirName + ".Repositories"
 $packageVersion = "7.0.11"
+$mapperDir = $dirname + "\AutoMapper"
 
 # SqlServer voor de domains en repos
 
@@ -120,12 +129,42 @@ dotnet add $domainsName package Microsoft.EntityFrameworkCore.Design --version $
 
 dotnet add $dirName package Microsoft.EntityFrameworkCore.Design --version $packageVersion
 
-# Onnodige packages removen in views.
+# AutoMapper voor de views
+
+dotnet add $dirName package AutoMapper.Extensions.Microsoft.DependencyInjection
+
+# Onnodige packages removen in views
 
 dotnet remove $dirName package Microsoft.EntityFrameworkCore.SqlServer
 
 dotnet remove $dirName package Microsoft.EntityFrameworkCore.Tools
 
-# Dit hoeft erbij.
+# Toevoegen van AutoMapper map en class
+
+dotnet new cs --name AutoMapperProfile --output $mapperDir
+
+# Dit hoeft erbij
 
 Write-Host "Done"
+```
+
+Vergeet niet om de `AutoMapper` ook in je `Program.cs` toe te voegen.
+
+```C#
+// Add Automapper
+builder.Services.AddAutoMapper(typeof(Program));
+
+// De automapper moet boven dit deel
+// DIT ONDERSTE DEEL NIET KOPIEREN!
+// HET BESTAAT AL
+var app = builder.Build();
+```
+## 4. Database opzetten
+
+Op het examen zal je hoogsts waarschijnlijk een bestaande database (backup) moeten restoren vooraleer je het zal kunnen gebruiken.
+
+### database toevoegen aan SQL Management Studio
+
+1.  
+
+
