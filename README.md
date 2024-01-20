@@ -45,6 +45,7 @@ Gebruik deze script om de domains, services en repositories projectmappen aan te
 4. Plak hier de onderstaande code in.
 
     ```powershell
+    # ---Begin---
     # Als je solution naam anders is dan je folder naam,
     # Verander dan $dirName naar de naam van je solution,
     # dus $dirName = "MijnProjectNaam"
@@ -117,7 +118,7 @@ dotnet add $reposName package Microsoft.EntityFrameworkCore.Tools --version $pac
 dotnet add $domainsName package Microsoft.EntityFrameworkCore.Design --version $packageVersion
 dotnet add $dirName package Microsoft.EntityFrameworkCore.Design --version $packageVersion
 
-# AutoMapper voor de views
+# AutoMapper voor de views en directory
 dotnet add $dirName package AutoMapper.Extensions.Microsoft.DependencyInjection
 
 # Onnodige packages removen in views
@@ -207,4 +208,150 @@ Scaffold-DbContext -Connection "Server=.\SQL19_VIVES; Database=DB-Beer; Trusted_
             //CreateMap<TSource, TDestination>;
         }
     }
+    ```
+## 6. Aparte oefeningen
+
+### Rich Control Panel
+1.  Rechterklik op de `wwwroot` folder en selecteer `Add`
+2.  Klik op `Client-Side Library`
+3.  Provider: `cdnjs`
+4.  Library: Typ `tinymce` in en druk op tab om de laatste versie te selecteren.
+5.  Druk op `install`
+6.  Voeg onderaan in de `view` waardat je de panel wilt weergeven het volgende:
+
+    ```cs
+    @section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    ```
+    ```html
+    <script src="~/lib/tinymce/tinymce.min.js"></script>
+
+    <script>
+        tinymce.init({
+            selector: '#tinyarea',
+            plugins: 'ai tinycomments mentions anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed permanentpen footnotes advtemplate advtable advcode editimage tableofcontents mergetags powerpaste tinymcespellchecker autocorrect a11ychecker typography inlinecss',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | align lineheight | tinycomments | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+            tinycomments_mode: 'embedded',
+            tinycomments_author: 'Author name',
+            mergetags_list: [
+                { value: 'First.Name', title: 'First Name' },
+                { value: 'Email', title: 'Email' },
+            ],
+            ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
+        });
+    </script>
+    ```
+
+7.  Geef het gekozen selector id (zie selector in tinymce.init) aan je textarea mee.
+    ```html
+    <textarea asp-for="Description" class="form-control" id="tinyarea"></textarea>
+    ```
+    >[!CAUTION]
+    >Vergeet niet om je `RenderSectionAsync` aan je layout html toe te voegen!
+8.  Voeg `RenderSectionAsync` aan je layout html toe (Shared\Layout.cshtml)
+    >[!IMPORTANT]
+    >Dit moet boven de sluitings tag van je body.
+
+    ```html
+    ...
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    </body>
+    ```
+
+### jQuery DatePicker
+
+Dit voorbeeld heeft 2 inputs nl. vertrekdatum en aankomstdatum
+
+1.  Rechterklik op de `wwwroot` folder en selecteer `Add`
+2.  Klik op `Client-Side Library`
+3.  Provider: `cdnjs`
+4.  Library: Typ `jqueryui` in en druk op tab om de laatste versie te selecteren.
+5.  Selecteer `Choose specific files`
+6.  Selecteer `jquery-ui.min.js` en onder `themes\[Kies thema]\` kies `jquery-ui.min.css`
+7.  Druk op `install`
+8.  V
+8.  Voeg onderaan in de `view` waardat je de panel wilt weergeven het volgende:
+
+    ```cs
+    @section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    ```
+    ```html
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+
+    <script>
+        $(() => {
+            let mindate;
+            $("#StartDate").datepicker({
+                beforeShowDay: $.datepicker.noWeekends,
+                minDate: 0,
+                numberOfMonths: 3,
+                dateFormat: 'yy-mm-dd',
+                onSelect: (minDateStr) => {
+
+                    mindate = minDateStr; // Get selected date
+                    console.log(mindate);
+                    $("#EndDate").datepicker('option', 'minDate', minDateStr || '0');// Set other min, default to today // don't use $("#dateBack").datepicker({ minDate: min || '0' }); only for  initialization
+                }
+            });
+
+            $("#EndDate").datepicker({
+                minDate: 0,
+                maxDate: '+1Y+6M',
+                dateFormat: 'yy-mm-dd',
+                onSelect: (maxDateStr) => {
+                    if (maxDateStr !== null) {
+                        console.log(maxDateStr);
+                        let start = new Date(mindate);
+                        let end = new Date(maxDateStr);
+                        let days = (end - start)
+                            / (1000 * 60 * 60 * 24);
+                        console.log("verschil :", days);
+                        $("#DateResult").val(days);
+                    }
+                }
+            });
+        })
+    </script>
+    ```
+
+9.  Dit zijn de input velden voor deze situatie:
+    ```html
+    <div class="form-group">
+        <label asp-for="StartDate" class="control-label"></label>
+        <input asp-for="StartDate" class="form-control" />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="EndDate" class="control-label"></label>
+        <input asp-for="EndDate" class="form-control" />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
+    ```
+
+    ```html
+    <input type="text" id="DateResult" />
+    ```
+
+    >[!CAUTION]
+    >Vergeet niet om je `RenderSectionAsync` aan je layout html toe te voegen!
+10.  Voeg `RenderSectionAsync` aan je layout html toe (Shared\Layout.cshtml)
+        >[!IMPORTANT]
+        >Dit moet boven de sluitings tag van je body.
+
+        ```html
+        ...
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        @await RenderSectionAsync("Scripts", required: false)
+        </body>
         ```
+        NIET AF
