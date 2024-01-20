@@ -343,8 +343,8 @@ Dit voorbeeld heeft 2 inputs nl. vertrekdatum en aankomstdatum
 >[!CAUTION]
 >Vergeet niet om je `RenderSectionAsync` aan je layout html toe te voegen!
 10.  Voeg `RenderSectionAsync` aan je layout html toe (Shared\Layout.cshtml)
-        >[!IMPORTANT]
-        >Dit moet boven de sluitings tag van je body.
+>[!IMPORTANT]
+>Dit moet boven de sluitings tag van je body.
 
         ```html
         ...
