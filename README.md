@@ -10,8 +10,8 @@ Dit is een stappenplan dat je kan volgen voor de examen. Als je fouten ziet geli
 
     ![ASP.NET Core Web App (Model-View-Controller)](image.png)
 
-    >[!CAUTION]
-    > Zorg zerker dat het C# en MVC is.
+>[!CAUTION]
+> Zorg zerker dat het C# en MVC is.
 
 3.  Vul de projectnaam, locatie in en druk op Next.
 
@@ -19,8 +19,8 @@ Dit is een stappenplan dat je kan volgen voor de examen. Als je fouten ziet geli
 
     ![Alt text](image-1.png)
 
-    >[!CAUTION]
-    > Het zou kunnen dat op het examen extra dingen gevraagd kunnen worden. Dus kijk goed naar de opgave!
+>[!CAUTION]
+> Het zou kunnen dat op het examen extra dingen gevraagd kunnen worden. Dus kijk goed naar de opgave!
 
 5.  Druk op `Create` om het project te creëren. 
 
@@ -251,8 +251,8 @@ Scaffold-DbContext -Connection "Server=.\SQL19_VIVES; Database=DB-Beer; Trusted_
     >[!CAUTION]
     >Vergeet niet om je `RenderSectionAsync` aan je layout html toe te voegen!
 8.  Voeg `RenderSectionAsync` aan je layout html toe (Shared\Layout.cshtml)
-    >[!IMPORTANT]
-    >Dit moet boven de sluitings tag van je body.
+>[!IMPORTANT]
+>Dit moet boven de sluitings tag van je body.
 
     ```html
     ...
@@ -340,8 +340,8 @@ Dit voorbeeld heeft 2 inputs nl. vertrekdatum en aankomstdatum
     <input type="text" id="DateResult" />
     ```
 
-    >[!CAUTION]
-    >Vergeet niet om je `RenderSectionAsync` aan je layout html toe te voegen!
+>[!CAUTION]
+>Vergeet niet om je `RenderSectionAsync` aan je layout html toe te voegen!
 10.  Voeg `RenderSectionAsync` aan je layout html toe (Shared\Layout.cshtml)
         >[!IMPORTANT]
         >Dit moet boven de sluitings tag van je body.
