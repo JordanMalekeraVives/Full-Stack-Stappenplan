@@ -187,11 +187,37 @@ Scaffold-DbContext -Connection "Server=.\SQL19_VIVES; Database=DB-Beer; Trusted_
 
 Deze laag zorgt voor alle call naar de database.
 
-1.  Maak per `entity` dat je in je Domain layer hebt, een `DAO` klasse in je repositories
+1.  Maak voor elke `entity` dat je in je Domain layer hebt, een `DAO` klasse in je repositories
 
     ![Alt text](images/image.png) 
     
     ![Alt text](image-1.png)
+
+    script:
+
+    >[!CAUTION]
+    >   Zorg wel eerst dat je entities gemaakt zijn!
+
+    ```Powershell
+    #SCRIPT
+
+    # Variabelen
+    $dirName = (Get-Item -Path ".\").Name
+    $domainsDir = $dirName + ".Domains"
+    $reposDir = $dirName + ".Repositories"
+    $entityDir = $domainsDir + "\Entities"
+    $entities = Get-ChildItem -Path $entityDir 
+    echo $entities
+
+    # Klassen toevoegen adhv entities
+    foreach($entity in $entities) {
+        $dao = $entity.BaseName + "DAO"
+        dotnet new class --name $dao --output $reposDir
+    }
+
+    # Done
+    Write-Host "Done"
+    ```
 
 2.  Per DAO klasse wil een constructor maken en get/edit/delete methoden maken
 
@@ -343,6 +369,81 @@ Deze laag zorgt voor alle call naar de database.
 
 Dit is het `tussenlaag` die data van je `Repositories` naar je `controller` stuurt (Repositories (`DAO`) -> Services (`service`) -> Controller)
 
+1.  Maak voor elke `DAO` in je Repositories, een nieuwe `Service` klasse
+    
+    ![Alt text](image-1.png)
+
+    ![Alt text](image.png)
+
+    Script:
+
+    ```Powershell
+    #SCRIPT
+
+    # Variabelen
+    $dirName = (Get-Item -Path ".\").Name
+    $domainsDir = $dirName + ".Domains"
+    $servicesDir = $dirName + ".Services"
+    $entityDir = $domainsDir + "\Entities"
+    $entities = Get-ChildItem -Path $entityDir 
+    echo $entities
+
+    # Klassen toevoegen adhv entities
+    foreach($entity in $entities) {
+        $service = $entity.BaseName + "Service"
+        dotnet new class --name $service --output $servicesDir
+    }
+
+    # Done
+    Write-Host "Done"
+    ```
+
+2.  Per `Service` klasse will de respectievelijke methoden 'kopieren'.
+
+    Bv. `BeerService`
+
+    ```c#
+    public class BeerServices
+    {
+        private BeerDAO _beerDAO;
+        public BeerServices()
+        {
+            _beerDAO = new BeerDAO();
+        }
+
+        public async Task<IEnumerable<Beer>?> GetAll()
+        {
+            return await _beerDAO.GetAll();
+        }
+
+        public async Task<IEnumerable<Beer>?> GetByAlcohol(decimal alcohol)
+        {
+            return await _beerDAO.GetByAlcohol(alcohol);
+        }
+        public async Task<IEnumerable<Beer>?> GetBeerByBrewery(int? breweryId)
+        {
+            return await _beerDAO.GetBeerByBrewery(breweryId);
+        }
+        public async Task<IEnumerable<Beer>?> GetBeerByBreweryName(String? breweryName)
+        {
+            return await _beerDAO.GetBeerByBreweryName(breweryName);
+        }
+
+        public async Task<Beer> Get(int id)
+        {
+            return await _beerDAO.Get(id);
+        }
+        public async Task Add(Beer entity)
+        {
+            await _beerDAO.Add(entity);
+        }
+
+        public async Task Edit(Beer entity)
+        {
+            await _beerDAO.Edit(entity);
+        }
+    }
+    ```
 
 
 
