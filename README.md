@@ -172,7 +172,7 @@ Nu kan je verder met het toevoegen van de database
 3. Zorg dat de `Default project` ingesteld staat op `[PROJECTNAAM].Domains`
 4.  Plak het commando
 >[!CAUTION]
->   Vergeet niet de waarden te veranderen!
+>   Vergeet niet de waarden te veranderen en zorg dat je in de juiste project terminal zet (Stap 3. NIET VERGETEN)!
 ```Powershell
 Scaffold-DbContext -Connection "Server=.\SERVERNAAM; Database=DATABASENAAM; Trusted_Connection=True; TrustServerCertificate=True; MultipleActiveResultSets=true;" -Provider Microsoft.EntityFrameworkCore.SqlServer -OutputDir "Entities" -ContextDir "Data" -Context "TABELDbContext"
 ```
