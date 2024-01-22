@@ -126,7 +126,7 @@ dotnet remove $dirName package Microsoft.EntityFrameworkCore.SqlServer
 dotnet remove $dirName package Microsoft.EntityFrameworkCore.Tools
 
 # Toevoegen van AutoMapper map en class
-dotnet new cs --name AutoMapperProfile --output $mapperDir
+dotnet new class --name AutoMapperProfile --output $mapperDir
 
 # Dit hoeft erbij
 Write-Host "Done"
@@ -346,8 +346,7 @@ Dit voorbeeld heeft 2 inputs nl. vertrekdatum en aankomstdatum
 >[!IMPORTANT]
 >Dit moet boven de sluitings tag van je body.
 
-        ```html
-        ...
+    ```html
         <script src="~/lib/jquery/dist/jquery.min.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
