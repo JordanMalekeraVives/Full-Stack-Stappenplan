@@ -7,7 +7,6 @@ public class AutoMapperProfile : Profile
 {
     public AutoMapperProfile()
     {
-        CreateMap<Beer, BeerVM>();
         //CreateMap<TSource, TDestination>;
     }
 }

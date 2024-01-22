@@ -8,7 +8,7 @@ Dit is een stappenplan dat je kan volgen voor de examen. Als je fouten ziet geli
 
 2.  Selecteer `ASP.NET Core Web App (Model-View-Controller)`.
 
-    ![ASP.NET Core Web App (Model-View-Controller)](image.png)
+    ![ASP.NET Core Web App (Model-View-Controller)](image5.png)
 
 >[!CAUTION]
 > Zorg zerker dat het C# en MVC is.
@@ -17,7 +17,7 @@ Dit is een stappenplan dat je kan volgen voor de examen. Als je fouten ziet geli
 
 4.  Kies voor de juiste framework `.NET 7.0` en authentiecatietype `Invidual accounts`.
 
-    ![Alt text](image-1.png)
+    ![Alt text](image-5.png)
 
 >[!CAUTION]
 > Het zou kunnen dat op het examen extra dingen gevraagd kunnen worden. Dus kijk goed naar de opgave!
@@ -55,11 +55,12 @@ Gebruik deze script om de domains, services en repositories projectmappen aan te
     $domainsName = $dirName + ".Domains"
     $servicesName = $dirName + ".Services"
     $reposName = $dirName + ".Repositories"
+    $frameworkVersion = "net7.0"
 
     # Niewe class libraries toevoegen met de juiste projectnamen
-    dotnet new classlib --name $domainsName
-    dotnet new classlib --name $servicesName
-    dotnet new classlib --name $reposName
+    dotnet new classlib --name $domainsName --framework $frameworkVersion
+    dotnet new classlib --name $servicesName --framework $frameworkVersion
+    dotnet new classlib --name $reposName --framework $frameworkVersion
 
     # De niewe libraries toevoegen aan project sln
     dotnet sln add $domainsName
@@ -164,12 +165,12 @@ Nu kan je verder met het toevoegen van de database
 4.  Selecteer uw servernaam en databasenaam
 > Soms kan dit een error teruggevern. In mij geval krijg ik altijd een error. Dus moet ik in mijn geval `.\sql19_vives` als servernaam gebruiken.
 
-### Scaffold command toepassen
+### Scaffold command toepassen (Domain Layer opmaken)
 
 1.  Druk bovenaan op `Tools`
 2.  Selecteer `NuGet Package Manager` en dan `Package Manager Console`
 3. Zorg dat de `Default project` ingesteld staat op `[PROJECTNAAM].Domains`
-4.  Plak het command
+4.  Plak het commando
 >[!CAUTION]
 >   Vergeet niet de waarden te veranderen!
 ```Powershell
@@ -181,6 +182,169 @@ Voorbeeld
 ```Powershell
 Scaffold-DbContext -Connection "Server=.\SQL19_VIVES; Database=DB-Beer; Trusted_Connection=True; TrustServerCertificate=True; MultipleActiveResultSets=true;" -Provider Microsoft.EntityFrameworkCore.SqlServer -OutputDir "Entities" -ContextDir "Data" -Context "BeerDbContext"
 ```
+
+## 5. Repository Layer opmaken
+
+Deze laag zorgt voor alle call naar de database.
+
+1.  Maak per `entity` dat je in je Domain layer hebt, een `DAO` klasse in je repositories
+
+    ![Alt text](images/image.png) 
+    
+    ![Alt text](image-1.png)
+
+2.  Per DAO klasse wil een constructor maken en get/edit/delete methoden maken
+
+    >[!WARNING]
+    >   Voeg enkel de methoden die worden gevraagd op de examen. Dit is een oplijsting van alle methoden die je kan doen.
+
+
+    Bv: `BeerDAO`
+    ```c#
+
+    public class BeerDAO
+    {
+        // BeerDbContext van domain layer
+        private readonly BeerDbContext _dbContext;
+
+        // Constructor
+        public BeerDAO()
+        {
+            _dbContext = new BeerDbContext();
+        }
+
+        // Alle bieren opvragen.
+        public async Task<IEnumerable<Beer>?> GetAll()
+        {
+            try
+            {
+                return await _dbContext.Beers
+                    .Include(a => a.BrouwernrNavigation)
+                    .Include(b => b.SoortnrNavigation)
+                    .ToListAsync(); 
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("error in DAO");
+                throw;
+            }
+        }
+
+        // Alle bieren opvragen (enkel hun naam)
+        public async Task<IEnumerable<String>?> GetAllNames()
+        {
+            try
+            {
+                return await _dbContext.Beers.Select(b => b.Naam).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("error in DAO");
+                throw;
+            }
+        }
+
+        // Lijst van bieren opvragen adhv hun Brouwerijnaam
+        // Dus een lijst opvragen adhv parameter
+        public async Task<IEnumerable<Beer>?> GetBeerByBreweryName(String? breweryName)
+        {
+            try
+            {// select * from Bieren
+                return await _dbContext.Beers
+                    .Where(b => b.BrouwernrNavigation.Naam == breweryName)
+                    .Include(b => b.BrouwernrNavigation)
+                    .Include(b => b.SoortnrNavigation)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("error in DAO");
+                throw;
+            }
+        }
+
+        // Één bier opvragen adhv id
+        public async Task<Beer> Get(int id)
+        {
+            try
+            {
+                return await _dbContext.Beers.Where
+                    (b => b.Biernr == id)
+                    .Include(b => b.BrouwernrNavigation)
+                    .Include(b => b.SoortnrNavigation).FirstAsync();
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("error DAO beer");
+            }
+        }
+
+        //An entity may be in one of the following states:
+
+        // Added.The entity does not yet exist in the database. The SaveChanges method must issue an INSERT statement.
+        
+        // Unchanged.Nothing needs to be done with this entity by the SaveChanges method.When you read an entity from the database, the entity starts out with this status.
+
+        // Modified.Some or all of the entity's property values have been modified. The SaveChanges method must issue an UPDATE statement.
+
+        // Deleted.The entity has been marked for deletion.The SaveChanges method must issue a DELETE statement.
+
+        // Detached.The entity isn't being tracked by the database context.
+
+        //  Een bier toevoegen
+        public async Task Add(Beer entity)
+        {
+            _dbContext.Entry(entity).State = EntityState.Added;
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
+        }
+
+        // Een bier aanpassen
+        public async Task Edit(Beer entity)
+        {
+            _dbContext.Entry(entity).State = EntityState.Modified;
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
+        }
+
+        // Een bier verwijderen
+        public async Task Delete(Beer entity)
+        {
+            _dbContext.Entry(entity).State = EntityState.Deleted;
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
+        }
+    }
+    ```
+
+    
+## 6. Service Layer opmaken
+
+Dit is het `tussenlaag` die data van je `Repositories` naar je `controller` stuurt (Repositories (`DAO`) -> Services (`service`) -> Controller)
+
+
+
 
 ## 5. AutoMapper Configureren
 >[!CAUTION]
@@ -204,7 +368,7 @@ Scaffold-DbContext -Connection "Server=.\SQL19_VIVES; Database=DB-Beer; Trusted_
     {
         public AutoMapperProfile()
         {
-            CreateMap<Beer, BeerVM>();
+            //CreateMap<Beer, BeerVM>();
             //CreateMap<TSource, TDestination>;
         }
     }
