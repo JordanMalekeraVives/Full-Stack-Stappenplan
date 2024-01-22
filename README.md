@@ -460,7 +460,7 @@ Dit is het `tussenlaag` die data van je `Repositories` naar je `controller` stuu
 
 
 
-## 5. AutoMapper Configureren
+## 7. AutoMapper Configureren
 >[!CAUTION]
 >Het installeren van de AutoMapper packages werd al gebeurt in de script. (zie 3.) Als je het script niet hebt gevolgd: NuGet package manager -> AutoMapper.Extensions.Microsoft.DependencyInjection -> enkel voor domains installeren (versie maakt niet uit. Mag laatste zijn.)
 
@@ -487,7 +487,7 @@ Dit is het `tussenlaag` die data van je `Repositories` naar je `controller` stuu
         }
     }
     ```
-## 6. Aparte oefeningen
+## 8. Aparte oefeningen
 
 ### Rich Control Panel
 1.  Rechterklik op de `wwwroot` folder en selecteer `Add`
