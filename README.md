@@ -44,8 +44,13 @@ Gebruik deze script om de domains, services en repositories projectmappen aan te
 
 4. Plak hier de onderstaande code in.
 
+    >[!IMPORTANT]
+    > Als je solution naam anders is dan je folder naam, verander dan $dirName naar de naam van je solution. Dus $dirName = "MijnProjectNaam"
+
     ```powershell
-    # ---Begin---
+
+    #SCRIPT
+
     # Als je solution naam anders is dan je folder naam,
     # Verander dan $dirName naar de naam van je solution,
     # dus $dirName = "MijnProjectNaam"
@@ -98,6 +103,9 @@ Om de packages toe te voegen aan je projecten, kan je de volgende script gebruik
 Plak dit in je Powershell terminal (zie 2. voor terminal tutorial)
 
 ```Powershell
+
+#SCRIPT
+
 # Variabelen
 
 $dirName = (Get-Item -Path ".\").Name
@@ -183,6 +191,9 @@ Voorbeeld
 Scaffold-DbContext -Connection "Server=.\SQL19_VIVES; Database=DB-Beer; Trusted_Connection=True; TrustServerCertificate=True; MultipleActiveResultSets=true;" -Provider Microsoft.EntityFrameworkCore.SqlServer -OutputDir "Entities" -ContextDir "Data" -Context "BeerDbContext"
 ```
 
+>[!WARNING]
+>Als je error krijgt dat "Scaffold-DbContext" geen geldige commando is moet je Visual Studio opnieuw opstarten.
+
 ## 5. Repository Layer opmaken
 
 Deze laag zorgt voor alle call naar de database.
@@ -199,6 +210,7 @@ Deze laag zorgt voor alle call naar de database.
     >   Zorg wel eerst dat je entities gemaakt zijn!
 
     ```Powershell
+
     #SCRIPT
 
     # Variabelen
@@ -378,6 +390,7 @@ Dit is het `tussenlaag` die data van je `Repositories` naar je `controller` stuu
     Script:
 
     ```Powershell
+
     #SCRIPT
 
     # Variabelen
