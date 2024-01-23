@@ -47,48 +47,45 @@ Gebruik deze script om de domains, services en repositories projectmappen aan te
 >[!IMPORTANT]
 > Als je solution naam anders is dan je folder naam, verander dan $dirName naar de naam van je solution. Dus $dirName = "MijnProjectNaam"
 
-    ```powershell
+```powershell
 
-    #SCRIPT
+#SCRIPT
+# Als je solution naam anders is dan je folder naam,
+# Verander dan $dirName naar de naam van je solution,
+# dus $dirName = "MijnProjectNaam"
+# Variabelen
+$dirName = (Get-Item -Path ".\").Name
+$domainsName = $dirName + ".Domains"
+$servicesName = $dirName + ".Services"
+$reposName = $dirName + ".Repositories"
+$frameworkVersion = "net7.0"
 
-    # Als je solution naam anders is dan je folder naam,
-    # Verander dan $dirName naar de naam van je solution,
-    # dus $dirName = "MijnProjectNaam"
+# Niewe class libraries toevoegen met de juiste projectnamen
+dotnet new classlib --name $domainsName --framework $frameworkVersion
+dotnet new classlib --name $servicesName --framework $frameworkVersion
+dotnet new classlib --name $reposName --framework $frameworkVersion
 
-    # Variabelen
-    $dirName = (Get-Item -Path ".\").Name
-    $domainsName = $dirName + ".Domains"
-    $servicesName = $dirName + ".Services"
-    $reposName = $dirName + ".Repositories"
-    $frameworkVersion = "net7.0"
+# De niewe libraries toevoegen aan project sln
+dotnet sln add $domainsName
+dotnet sln add $servicesName
+dotnet sln add $reposName
 
-    # Niewe class libraries toevoegen met de juiste projectnamen
-    dotnet new classlib --name $domainsName --framework $frameworkVersion
-    dotnet new classlib --name $servicesName --framework $frameworkVersion
-    dotnet new classlib --name $reposName --framework $frameworkVersion
+# De juiste references leggen tussen de projecten
+dotnet add $dirName reference $domainsName
+dotnet add $dirName reference $servicesName
+dotnet add $servicesName reference $domainsName
+dotnet add $servicesName reference $reposName
+dotnet add $reposName reference $domainsName
 
-    # De niewe libraries toevoegen aan project sln
-    dotnet sln add $domainsName
-    dotnet sln add $servicesName
-    dotnet sln add $reposName
+# Remove the class1 classes from the class libraries
+Remove-Item -Path "$domainsName\class1.cs" -Force
+Remove-Item -Path "$servicesName\class1.cs" -Force
+Remove-Item -Path "$reposName\class1.cs" -Force
 
-    # De juiste references leggen tussen de projecten
-    dotnet add $dirName reference $domainsName
-    dotnet add $dirName reference $servicesName
-    dotnet add $servicesName reference $domainsName
-    dotnet add $servicesName reference $reposName
-    dotnet add $reposName reference $domainsName
-
-    # Remove the class1 classes from the class libraries
-    Remove-Item -Path "$domainsName\class1.cs" -Force
-    Remove-Item -Path "$servicesName\class1.cs" -Force
-    Remove-Item -Path "$reposName\class1.cs" -Force
-
-    # Dit hoeft erbij
-    Write-Host "Done"
-    ```
-
-5.  Hier zie je dan het resultaat:
+# Dit hoeft erbij
+Write-Host "Done"
+```
+ Hier zie je dan het resultaat:
 
     ![App Architectuur](images/image-7.png)
 
@@ -211,27 +208,27 @@ Deze laag zorgt voor alle call naar de database.
 >[!CAUTION]
 > Zorg wel eerst dat je entities gemaakt zijn!
 
-    ```Powershell
+```Powershell
 
-    #SCRIPT
+#SCRIPT
 
-    # Variabelen
-    $dirName = (Get-Item -Path ".\").Name
-    $domainsDir = $dirName + ".Domains"
-    $reposDir = $dirName + ".Repositories"
-    $entityDir = $domainsDir + "\Entities"
-    $entities = Get-ChildItem -Path $entityDir 
-    echo $entities
+# Variabelen
+$dirName = (Get-Item -Path ".\").Name
+$domainsDir = $dirName + ".Domains"
+$reposDir = $dirName + ".Repositories"
+$entityDir = $domainsDir + "\Entities"
+$entities = Get-ChildItem -Path $entityDir 
+echo $entities
 
-    # Klassen toevoegen adhv entities
-    foreach($entity in $entities) {
-        $dao = $entity.BaseName + "DAO"
-        dotnet new class --name $dao --output $reposDir
-    }
+# Klassen toevoegen adhv entities
+foreach($entity in $entities) {
+    $dao = $entity.BaseName + "DAO"
+    dotnet new class --name $dao --output $reposDir
+}
 
-    # Done
-    Write-Host "Done"
-    ```
+# Done
+Write-Host "Done"
+```
 
 2.  Per DAO klasse wil een constructor maken en get/edit/delete methoden maken
 
@@ -239,144 +236,144 @@ Deze laag zorgt voor alle call naar de database.
 > Voeg enkel de methoden die worden gevraagd op de examen. Dit is een oplijsting van alle methoden die je kan doen.
 
 
-    Bv: `BeerDAO`
-    ```c#
+Bv: `BeerDAO`
+```c#
 
-    public class BeerDAO
+public class BeerDAO
+{
+    // BeerDbContext van domain layer
+    private readonly BeerDbContext _dbContext;
+
+    // Constructor
+    public BeerDAO()
     {
-        // BeerDbContext van domain layer
-        private readonly BeerDbContext _dbContext;
+        _dbContext = new BeerDbContext();
+    }
 
-        // Constructor
-        public BeerDAO()
+    // Alle bieren opvragen.
+    public async Task<IEnumerable<Beer>?> GetAll()
+    {
+        try
         {
-            _dbContext = new BeerDbContext();
+            return await _dbContext.Beers
+                .Include(a => a.BrouwernrNavigation)
+                .Include(b => b.SoortnrNavigation)
+                .ToListAsync(); 
         }
-
-        // Alle bieren opvragen.
-        public async Task<IEnumerable<Beer>?> GetAll()
+        catch (Exception ex)
         {
-            try
-            {
-                return await _dbContext.Beers
-                    .Include(a => a.BrouwernrNavigation)
-                    .Include(b => b.SoortnrNavigation)
-                    .ToListAsync(); 
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("error in DAO");
-                throw;
-            }
-        }
-
-        // Alle bieren opvragen (enkel hun naam)
-        public async Task<IEnumerable<String>?> GetAllNames()
-        {
-            try
-            {
-                return await _dbContext.Beers.Select(b => b.Naam).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("error in DAO");
-                throw;
-            }
-        }
-
-        // Lijst van bieren opvragen adhv hun Brouwerijnaam
-        // Dus een lijst opvragen adhv parameter
-        public async Task<IEnumerable<Beer>?> GetBeerByBreweryName(String? breweryName)
-        {
-            try
-            {// select * from Bieren
-                return await _dbContext.Beers
-                    .Where(b => b.BrouwernrNavigation.Naam == breweryName)
-                    .Include(b => b.BrouwernrNavigation)
-                    .Include(b => b.SoortnrNavigation)
-                    .ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("error in DAO");
-                throw;
-            }
-        }
-
-        // Één bier opvragen adhv id
-        public async Task<Beer> Get(int id)
-        {
-            try
-            {
-                return await _dbContext.Beers.Where
-                    (b => b.Biernr == id)
-                    .Include(b => b.BrouwernrNavigation)
-                    .Include(b => b.SoortnrNavigation).FirstAsync();
-            }
-            catch(Exception ex)
-            {
-                throw new Exception("error DAO beer");
-            }
-        }
-
-        //An entity may be in one of the following states:
-
-        // Added.The entity does not yet exist in the database. The SaveChanges method must issue an INSERT statement.
-        
-        // Unchanged.Nothing needs to be done with this entity by the SaveChanges method.When you read an entity from the database, the entity starts out with this status.
-
-        // Modified.Some or all of the entity's property values have been modified. The SaveChanges method must issue an UPDATE statement.
-
-        // Deleted.The entity has been marked for deletion.The SaveChanges method must issue a DELETE statement.
-
-        // Detached.The entity isn't being tracked by the database context.
-
-        //  Een bier toevoegen
-        public async Task Add(Beer entity)
-        {
-            _dbContext.Entry(entity).State = EntityState.Added;
-            try
-            {
-                await _dbContext.SaveChangesAsync();
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
-            }
-        }
-
-        // Een bier aanpassen
-        public async Task Edit(Beer entity)
-        {
-            _dbContext.Entry(entity).State = EntityState.Modified;
-            try
-            {
-                await _dbContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
-            }
-        }
-
-        // Een bier verwijderen
-        public async Task Delete(Beer entity)
-        {
-            _dbContext.Entry(entity).State = EntityState.Deleted;
-            try
-            {
-                await _dbContext.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
-            }
+            Console.WriteLine("error in DAO");
+            throw;
         }
     }
-    ```
+
+    // Alle bieren opvragen (enkel hun naam)
+    public async Task<IEnumerable<String>?> GetAllNames()
+    {
+        try
+        {
+            return await _dbContext.Beers.Select(b => b.Naam).ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("error in DAO");
+            throw;
+        }
+    }
+
+    // Lijst van bieren opvragen adhv hun Brouwerijnaam
+    // Dus een lijst opvragen adhv parameter
+    public async Task<IEnumerable<Beer>?> GetBeerByBreweryName(String? breweryName)
+    {
+        try
+        {// select * from Bieren
+            return await _dbContext.Beers
+                .Where(b => b.BrouwernrNavigation.Naam == breweryName)
+                .Include(b => b.BrouwernrNavigation)
+                .Include(b => b.SoortnrNavigation)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("error in DAO");
+            throw;
+        }
+    }
+
+    // Één bier opvragen adhv id
+    public async Task<Beer> Get(int id)
+    {
+        try
+        {
+            return await _dbContext.Beers.Where
+                (b => b.Biernr == id)
+                .Include(b => b.BrouwernrNavigation)
+                .Include(b => b.SoortnrNavigation).FirstAsync();
+        }
+        catch(Exception ex)
+        {
+            throw new Exception("error DAO beer");
+        }
+    }
+
+    //An entity may be in one of the following states:
+
+    // Added.The entity does not yet exist in the database. The SaveChanges method must issue an INSERT statement.
+    
+    // Unchanged.Nothing needs to be done with this entity by the SaveChanges method.When you read an entity from the database, the entity starts out with this status.
+
+    // Modified.Some or all of the entity's property values have been modified. The SaveChanges method must issue an UPDATE statement.
+
+    // Deleted.The entity has been marked for deletion.The SaveChanges method must issue a DELETE statement.
+
+    // Detached.The entity isn't being tracked by the database context.
+
+    //  Een bier toevoegen
+    public async Task Add(Beer entity)
+    {
+        _dbContext.Entry(entity).State = EntityState.Added;
+        try
+        {
+            await _dbContext.SaveChangesAsync();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+    }
+
+    // Een bier aanpassen
+    public async Task Edit(Beer entity)
+    {
+        _dbContext.Entry(entity).State = EntityState.Modified;
+        try
+        {
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+    }
+
+    // Een bier verwijderen
+    public async Task Delete(Beer entity)
+    {
+        _dbContext.Entry(entity).State = EntityState.Deleted;
+        try
+        {
+            await _dbContext.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+    }
+}
+```
 
     
 ## 6. Service Layer opmaken
@@ -534,14 +531,14 @@ Dit is het `tussenlaag` die data van je `Repositories` naar je `controller` stuu
 >[!IMPORTANT]
 >Dit moet boven de sluitings tag van je body.
 
-    ```html
-    ...
+```html
+ <!-- ... -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
-    </body>
-    ```
+<!-- </body> -->
+```
 
 ### jQuery DatePicker
 
@@ -626,9 +623,10 @@ Dit voorbeeld heeft 2 inputs nl. vertrekdatum en aankomstdatum
 >Dit moet boven de sluitings tag van je body.
 
 ```html
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/js/site.js" asp-append-version="true"></script>
-@await RenderSectionAsync("Scripts", required: false)
-</body>
+<!-- ... -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+<!-- </body> -->
 ```
