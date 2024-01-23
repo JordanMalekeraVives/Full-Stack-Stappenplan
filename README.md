@@ -44,8 +44,8 @@ Gebruik deze script om de domains, services en repositories projectmappen aan te
 
 4. Plak hier de onderstaande code in.
 
-    >[!IMPORTANT]
-    > Als je solution naam anders is dan je folder naam, verander dan $dirName naar de naam van je solution. Dus $dirName = "MijnProjectNaam"
+>[!IMPORTANT]
+> Als je solution naam anders is dan je folder naam, verander dan $dirName naar de naam van je solution. Dus $dirName = "MijnProjectNaam"
 
     ```powershell
 
@@ -169,6 +169,8 @@ Nu kan je verder met het toevoegen van de database
 2.  Selecteer `Server Explorer`
 3.  Rechterklik op `Data Connections` en kies voor `Add Connection...`
 4.  Selecteer uw servernaam en databasenaam
+
+>[!IMPORTANT]
 > Soms kan dit een error teruggevern. In mij geval krijg ik altijd een error. Dus moet ik in mijn geval `.\sql19_vives` als servernaam gebruiken.
 
 ### Scaffold command toepassen (Domain Layer opmaken)
@@ -177,8 +179,10 @@ Nu kan je verder met het toevoegen van de database
 2.  Selecteer `NuGet Package Manager` en dan `Package Manager Console`
 3. Zorg dat de `Default project` ingesteld staat op `[PROJECTNAAM].Domains`
 4.  Plak het commando
+
 >[!CAUTION]
 >   Vergeet niet de waarden te veranderen en zorg dat je in de juiste project terminal zet (Stap 3. NIET VERGETEN)!
+
 ```Powershell
 Scaffold-DbContext -Connection "Server=.\SERVERNAAM; Database=DATABASENAAM; Trusted_Connection=True; TrustServerCertificate=True; MultipleActiveResultSets=true;" -Provider Microsoft.EntityFrameworkCore.SqlServer -OutputDir "Entities" -ContextDir "Data" -Context "TABELDbContext"
 ```
@@ -204,8 +208,8 @@ Deze laag zorgt voor alle call naar de database.
 
     script:
 
-    >[!CAUTION]
-    >   Zorg wel eerst dat je entities gemaakt zijn!
+>[!CAUTION]
+> Zorg wel eerst dat je entities gemaakt zijn!
 
     ```Powershell
 
@@ -231,8 +235,8 @@ Deze laag zorgt voor alle call naar de database.
 
 2.  Per DAO klasse wil een constructor maken en get/edit/delete methoden maken
 
-    >[!WARNING]
-    >   Voeg enkel de methoden die worden gevraagd op de examen. Dit is een oplijsting van alle methoden die je kan doen.
+>[!WARNING]
+> Voeg enkel de methoden die worden gevraagd op de examen. Dit is een oplijsting van alle methoden die je kan doen.
 
 
     Bv: `BeerDAO`
@@ -522,8 +526,10 @@ Dit is het `tussenlaag` die data van je `Repositories` naar je `controller` stuu
     ```html
     <textarea asp-for="Description" class="form-control" id="tinyarea"></textarea>
     ```
-    >[!CAUTION]
-    >Vergeet niet om je `RenderSectionAsync` aan je layout html toe te voegen!
+
+>[!CAUTION]
+>Vergeet niet om je `RenderSectionAsync` aan je layout html toe te voegen!
+
 8.  Voeg `RenderSectionAsync` aan je layout html toe (Shared\Layout.cshtml)
 >[!IMPORTANT]
 >Dit moet boven de sluitings tag van je body.
@@ -618,10 +624,11 @@ Dit voorbeeld heeft 2 inputs nl. vertrekdatum en aankomstdatum
 10.  Voeg `RenderSectionAsync` aan je layout html toe (Shared\Layout.cshtml)
 >[!IMPORTANT]
 >Dit moet boven de sluitings tag van je body.
+
 ```html
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-    </body>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
 ```
