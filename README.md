@@ -8,7 +8,7 @@ Dit is een stappenplan dat je kan volgen voor de examen. Als je fouten ziet geli
 
 2.  Selecteer `ASP.NET Core Web App (Model-View-Controller)`.
 
-    ![ASP.NET Core Web App (Model-View-Controller)](image5.png)
+    ![ASP.NET Core Web App (Model-View-Controller)](images/image-2.png)
 
 >[!CAUTION]
 > Zorg zerker dat het C# en MVC is.
@@ -17,7 +17,7 @@ Dit is een stappenplan dat je kan volgen voor de examen. Als je fouten ziet geli
 
 4.  Kies voor de juiste framework `.NET 7.0` en authentiecatietype `Invidual accounts`.
 
-    ![Alt text](image-5.png)
+    ![Settings](images/image-3.png)
 
 >[!CAUTION]
 > Het zou kunnen dat op het examen extra dingen gevraagd kunnen worden. Dus kijk goed naar de opgave!
@@ -32,15 +32,15 @@ Gebruik deze script om de domains, services en repositories projectmappen aan te
 
 1.  Selecteer links boven de optie `View`.
 
-    ![VS Code View](image-2.png)
+    ![VS Code View](images/image-4.png)
 
 2.  Selecteer de optie `Terminal`
 
-    ![Terminal](image-3.png)
+    ![Terminal](images/image-5.png)
 
 3.  Onderaan moet je nu een Powershell terminal zien.
 
-    ![PS Terminal](image-4.png)
+    ![PS Terminal](images/image-6.png)
 
 4. Plak hier de onderstaande code in.
 
@@ -90,7 +90,7 @@ Gebruik deze script om de domains, services en repositories projectmappen aan te
 
 5.  Hier zie je dan het resultaat:
 
-    ![App Architectuur](image-5.png)
+    ![App Architectuur](images/image-7.png)
 
 ### Manueel
 
@@ -202,7 +202,7 @@ Deze laag zorgt voor alle call naar de database.
 
     ![Alt text](images/image.png) 
     
-    ![Alt text](image-1.png)
+    ![Alt text](images/image-1.png)
 
     script:
 
@@ -383,9 +383,7 @@ Dit is het `tussenlaag` die data van je `Repositories` naar je `controller` stuu
 
 1.  Maak voor elke `DAO` in je Repositories, een nieuwe `Service` klasse
     
-    ![Alt text](image-1.png)
-
-    ![Alt text](image.png)
+    ![Alt text](images/image-8.png)
 
     Script:
 
@@ -552,7 +550,6 @@ Dit voorbeeld heeft 2 inputs nl. vertrekdatum en aankomstdatum
 5.  Selecteer `Choose specific files`
 6.  Selecteer `jquery-ui.min.js` en onder `themes\[Kies thema]\` kies `jquery-ui.min.css`
 7.  Druk op `install`
-8.  V
 8.  Voeg onderaan in de `view` waardat je de panel wilt weergeven het volgende:
 
     ```cs
