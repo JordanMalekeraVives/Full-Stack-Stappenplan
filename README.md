@@ -87,7 +87,7 @@ Write-Host "Done"
 ```
  Hier zie je dan het resultaat:
 
-    ![App Architectuur](images/image-7.png)
+![App Architectuur](images/image-7.png)
 
 ## 3. Entity Framework en AutoMapper packages opzetten (voor database)
 
