@@ -92,8 +92,6 @@ Gebruik deze script om de domains, services en repositories projectmappen aan te
 
     ![App Architectuur](images/image-7.png)
 
-### Manueel
-
 ## 3. Entity Framework en AutoMapper packages opzetten (voor database)
 
 ### Packages installeren a.d.h.v. script
@@ -620,12 +618,10 @@ Dit voorbeeld heeft 2 inputs nl. vertrekdatum en aankomstdatum
 10.  Voeg `RenderSectionAsync` aan je layout html toe (Shared\Layout.cshtml)
 >[!IMPORTANT]
 >Dit moet boven de sluitings tag van je body.
-
-    ```html
-        <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-        @await RenderSectionAsync("Scripts", required: false)
-        </body>
-        ```
-        NIET AF
+```html
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    </body>
+```
