@@ -107,7 +107,7 @@ $dirName = (Get-Item -Path ".\").Name
 $domainsName = $dirName + ".Domains"
 $servicesName = $dirName + ".Services"
 $reposName = $dirName + ".Repositories"
-$packageVersion = "7.0.16"
+$packageVersion = "7.0.17"
 $mapperDir = $dirname + "\AutoMapper"
 
 # SqlServer voor de domains en repos
